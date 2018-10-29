@@ -1,0 +1,46 @@
+NOTE:
+	Youtube: https://www.youtube.com/watch?v=79xFyOc_eEY
+	
+*******************Ansible_Installation****************************
+1. Launch Red-hat Linux Ec2 instance
+2. Update your Ec2 instance
+	#yum update
+3. Add a third party repository named EPEL(Extra Package for enterprise Linux)
+	# rpm -Uvh https://d1.fedoraproject.org/pub/epel-release-latest-7.noarch.rpm
+4. Install Ansible
+	# yum install ansible
+Testing:
+---------
+
+Check ansible version
+	#ansible --version
+	
+****************************Ansible_Configuration******************************
+1. Create a new user for ansible administration & grant access to user(Master and Slave)
+	#useradd ansadmin
+	#passwd ansadmin
+	# visudo
+		ansadmin	ALL=(ALL)	NOPASSWD: ALL
+2. Enable user login on all Ec2 instances (Master & Slave)
+	#vi /etc/ssh/sshd_config
+		Uncommit PasswordAuthentication yes
+	# service sshd restart
+3. Login as a ansadmin user on master and generate ssh key (Master)
+	# ssh-keygen
+4.Copy keys to target servers(Master)
+	# ssh-copy-id <target-server>
+5. Update target servers information on /etc/ansible/hosts file(Master)
+	# echo "10.10.x.x" > /etc/ansible/hosts
+Testing:
+-------
+ Run ansible command as a ansadmin user it should be successful(Master)
+ # ansible all -m ping
+ 
+ 
+ Ansible sample commands:
+ ----------------------------
+ Rebooting- ansible all -a "/sbin/reboot"
+ Copyfile- ansible all -m copy -a "src=/home/dan dest=/tmp/home"
+ create user- ansible all - user -a "name=testuser password=<encrypted password>"
+ Remove user- ansible all -m user -a "name=testuser state=absent"
+ change file permission- ansible all -m file -a "dest=/home/dan/file.txt mode=777"
